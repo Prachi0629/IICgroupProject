@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Admin Dashboard</title>
+    
+    <!-- Link to the external stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- External libraries for functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <h1 class="logo">Conf.IO</h1>
+            <nav>
+                <a href="#dashboard" class="nav-link active"><i class="icon">📊</i> <span>Dashboard</span></a>
+                <a href="#attendees" class="nav-link"><i class="icon">👥</i> <span>Attendees</span></a>
+                <a href="#scanner" class="nav-link"><i class="icon">📷</i> <span>Scanner</span></a>
+                <a href="#committee" class="nav-link"><i class="icon">🧑‍💼</i> <span>Committee</span></a>
+            </nav>
+            <div class="user-profile">
+                <p>Admin User</p>
+                <small>System Administrator</small>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="page active">
+                <h2>Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>Total Attendees</h3><p id="total-attendees">0</p></div>
+                    <div class="stat-card"><h3>Total Check-ins</h3><p id="total-checkins">0</p></div>
+                    <div class="stat-card"><h3>Meals Served</h3><p id="total-food-scans">0</p></div>
+                </div>
+                <div class="chart-container"><canvas id="session-chart"></canvas></div>
+            </section>
+
+            <!-- Attendees Section -->
+            <section id="attendees" class="page">
+                <h2>Manage Attendees</h2>
+                <div class="content-split">
+                    <div class="form-container card">
+                        <h3>Register New Attendee</h3>
+                        <form id="add-attendee-form">
+                            <input type="text" id="name" placeholder="Full Name" required>
+                            <input type="email" id="email" placeholder="Email Address" required>
+                            <select id="type" required>
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="Presenter">Presenter</option>
+                                <option value="Member">Member</option>
+                            </select>
+                            <button type="submit">Register Attendee</button>
+                        </form>
+                    </div>
+                    <div class="table-container card">
+                        <h3>Registered Attendees</h3>
+                        <div class="attendee-list" id="attendee-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scanner Section -->
+            <section id="scanner" class="page">
+                <h2>QR Code Scanner</h2>
+                <div class="scanner-container-inner">
+                    <div id="setup-screen" class="scanner-card active">
+                        <h3>Scanner Setup</h3>
+                        <p>Select your duty station to begin scanning.</p>
+                        <select id="scan-type">
+                            <option value="attendance">Attendance Check-in</option>
+                            <option value="food">Food Service</option>
+                        </select>
+                        <div id="attendance-options">
+                            <input type="text" id="session-id" placeholder="Enter Session ID (e.g., Room1-AI)">
+                        </div>
+                        <div id="food-options" style="display: none;">
+                            <select id="meal-type">
+                                <option value="Day1-Breakfast">Day 1: Breakfast</option>
+                                <option value="Day1-Lunch">Day 1: Lunch</option>
+                                <option value="Day1-Dinner">Day 1: Dinner</option>
+                                <option value="Day2-Breakfast">Day 2: Breakfast</option>
+                                <option value="Day2-Lunch">Day 2: Lunch</option>
+                                <option value="Day2-Dinner">Day 2: Dinner</option>
+                            </select>
+                        </div>
+                        <button id="start-scan-btn">Start Scanning</button>
+                    </div>
+                    <div id="scanner-screen" class="scanner-card">
+                        <h3 id="scanner-title">Scanning...</h3>
+                        <div id="qr-reader"></div>
+                        <button id="stop-scan-btn">Change Station</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Committee Section -->
+            <section id="committee" class="page">
+                <h2>Working Committee</h2>
+                <!-- This container will be populated by JavaScript -->
+                <div id="committee-list-container" class="committee-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="qr-modal-name"></h3>
+            <div id="qrcode-container"></div>
+            <p>Scan this code for attendance and food.</p>
+        </div>
+    </div>
+    
+    <!-- Result Message Overlay -->
+    <div id="result-overlay" class="result-overlay">
+        <div id="result-message" class="result-message"></div>
+    </div>
+
+    <!-- Link to the external JavaScript file -->
+    <script src="admin.js"></script>
+</body>
+</html>

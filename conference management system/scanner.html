@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Scanner</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Library for easy QR code scanning -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+    <div class="scanner-container">
+        <div id="setup-screen" class="scanner-card active">
+            <h1>Scanner Setup</h1>
+            <p>Select your duty station to begin scanning.</p>
+            <select id="scan-type">
+                <option value="attendance">Attendance Check-in</option>
+                <option value="food">Food Service</option>
+            </select>
+            <div id="attendance-options">
+                <input type="text" id="session-id" placeholder="Enter Session ID (e.g., Room1-AI)">
+            </div>
+            <div id="food-options" style="display: none;">
+                <select id="meal-type">
+                    <option value="Day1-Breakfast">Day 1: Breakfast</option>
+                    <option value="Day1-Lunch">Day 1: Lunch</option>
+                    <option value="Day1-Dinner">Day 1: Dinner</option>
+                    <option value="Day2-Breakfast">Day 2: Breakfast</option>
+                    <option value="Day2-Lunch">Day 2: Lunch</option>
+                    <option value="Day2-Dinner">Day 2: Dinner</option>
+                </select>
+            </div>
+            <button id="start-scan-btn">Start Scanning</button>
+        </div>
+
+        <div id="scanner-screen" class="scanner-card">
+            <h1 id="scanner-title">Scanning...</h1>
+            <div id="qr-reader"></div>
+            <button id="stop-scan-btn">Change Station</button>
+        </div>
+    </div>
+
+    <!-- Result Message Overlay -->
+    <div id="result-overlay" class="result-overlay">
+        <div id="result-message" class="result-message"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_URL = 'http://127.0.0.1:5000';
+
+            const setupScreen = document.getElementById('setup-screen');
+            const scannerScreen = document.getElementById('scanner-screen');
+            const scanTypeSelect = document.getElementById('scan-type');
+            const attendanceOptions = document.getElementById('attendance-options');
+            const foodOptions = document.getElementById('food-options');
+            const startBtn = document.getElementById('start-scan-btn');
+            const stopBtn = document.getElementById('stop-scan-btn');
+            const scannerTitle = document.getElementById('scanner-title');
+            
+            let html5QrCode;
+            let isScanning = false;
+
+            scanTypeSelect.addEventListener('change', () => {
+                if (scanTypeSelect.value === 'food') {
+                    foodOptions.style.display = 'block';
+                    attendanceOptions.style.display = 'none';
+                } else {
+                    foodOptions.style.display = 'none';
+                    attendanceOptions.style.display = 'block';
+                }
+            });
+
+            startBtn.addEventListener('click', () => {
+                const scanType = scanTypeSelect.value;
+                let context;
+
+                if (scanType === 'attendance') {
+                    context = document.getElementById('session-id').value;
+                    if (!context) {
+                        alert('Please enter a Session ID.');
+                        return;
+                    }
+                    scannerTitle.textContent = `Checking In: ${context}`;
+                } else {
+                    context = document.getElementById('meal-type').value;
+                    scannerTitle.textContent = `Serving: ${context}`;
+                }
+                
+                setupScreen.classList.remove('active');
+                scannerScreen.classList.add('active');
+                startScanner(scanType, context);
+            });
+            
+            stopBtn.addEventListener('click', () => {
+                stopScanner();
+                scannerScreen.classList.remove('active');
+                setupScreen.classList.add('active');
+            });
+
+            function startScanner(scanType, context) {
+                if (isScanning) return;
+                isScanning = true;
+                
+                html5QrCode = new Html5Qrcode("qr-reader");
+                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                    // Pause scanner to prevent multiple scans
+                    html5QrCode.pause();
+                    handleQrCode(decodedText, scanType, context);
+                };
+                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+                    .catch(err => console.error("Unable to start scanning.", err));
+            }
+            
+            function stopScanner() {
+                if (!isScanning) return;
+                isScanning = false;
+                html5QrCode.stop().catch(err => console.error("Error stopping scanner", err));
+            }
+
+            async function handleQrCode(token, scanType, context) {
+                let endpoint = '';
+                let payload = { qr_code_token: token };
+
+                if (scanType === 'attendance') {
+                    endpoint = `${API_URL}/api/scan/attendance`;
+                    payload.session_id = context;
+                } else {
+                    endpoint = `${API_URL}/api/scan/food`;
+                    payload.meal_type = context;
+                }
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        showResult(result.message, 'success');
+                    } else {
+                        showResult(result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Scan failed:', error);
+                    showResult('Network error. Please try again.', 'error');
+                } finally {
+                    // Resume scanning after a delay
+                    setTimeout(() => {
+                        if(isScanning) html5QrCode.resume();
+                    }, 2000);
+                }
+            }
+
+            function showResult(message, type) {
+                const overlay = document.getElementById('result-overlay');
+                const messageBox = document.getElementById('result-message');
+
+                messageBox.textContent = message;
+                messageBox.className = `result-message ${type}`;
+                overlay.classList.add('visible');
+
+                setTimeout(() => {
+                    overlay.classList.remove('visible');
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
