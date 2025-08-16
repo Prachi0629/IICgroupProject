@@ -1,20 +1,20 @@
 # ICAIISDApp Project
-This is a React Native / Expo app developed for the International Conference ICAIISD 2025. The app provides attendees and organizers with a seamless mobile experience to access conference information, member login, schedules, and notifications.
+This is a React Native / Expo app developed for the International Conference ICAIISD 2025. The app provides authentication of attendees and meals throught qrcode scanning and database.
 
 ## Installation
-Here are steps to install this on your system along with expo cli and dependencies.
+Here are steps to install this on your system along with Expo cli and dependencies.
 
 ### Requirements
 * [NodeJS](http://nodejs.org/en/download) - Install NodeJS.
- *[Git](https://git-scm.com/) - Git and Github Account.
+* [Git](https://git-scm.com/) - Git and Github Account.
 * [VScode](https://code.visualstudio.com/download) - IDE like vscode to edit code.
 
-## Installation for expo-cli and react native
+## Installation for Expo-cli and React Native
 ```bash
 npm install -g expo-cli
 ```
 
-Once expo is installed git clone this repo and run
+Once Expo is installed GIT clone this repo and run
 
 ```bash
 expo doctor
@@ -24,11 +24,11 @@ This will install all dependencies required
 
 ## Run Expo App
 
-change directory to the app directory
+Change directory to the app directory
 ```bash
 npx expo start
 ```
-this will start expo app and then you can run it on your android by typing 'a'
+This will start expo app and then you can run it on your android by typing 'a'
 
 ```bash
 use Cltr + C to stop running the app.
