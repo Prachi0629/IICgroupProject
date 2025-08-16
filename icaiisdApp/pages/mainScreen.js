@@ -1,11 +1,40 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image,  } from 'react-native';
+import { Button,View, Text, TouchableOpacity, StyleSheet, Image,  } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Camera,CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import {useState, useEffect} from 'react';
+
 export default function MainPage({route}) {
-  // let userId = 'default';
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const navigation = useNavigation();
   const userId = route.params?.userId;
-  // console.log(userId)
+  const newData = route.params?.newData;
+
   return (
     <SafeAreaView style={styles.container}>
       
@@ -32,13 +61,20 @@ export default function MainPage({route}) {
 
       {/* Scan button */}
       <TouchableOpacity style={styles.scanButton}>
-        <Text style={styles.scanButtonText}>Click to Scan</Text>
+        <Text style={styles.scanButtonText} onPress = {() => navigation.navigate('qrScanner')}>Click to Scan</Text>
       </TouchableOpacity>
+
+      {/* <Button
+    onPress={() => navigation.navigate('qrScanner')}
+    title="Click to Scan"
+    style = {styles.scanButton}
+    ccessibilityLabel="Learn more about this purple button"
+  /> */}
 
       {/* Status Box */}
       <View style={styles.statusBox}>
         <Text style={styles.statusTitle}>Status</Text>
-        <Text style={styles.statusText}>Name:</Text>
+        <Text style={styles.statusText}>Name: {newData}</Text>
         <Text style={styles.statusText}>Email:</Text>
         <Text style={styles.statusLog}>Registered/Already Registered</Text>
       </View>
