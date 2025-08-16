@@ -5,9 +5,9 @@ This is a React Native / Expo app developed for the International Conference ICA
 Here are steps to install this on your system along with expo cli and dependencies.
 
 ### Requirements
-[NodeJS](http://nodejs.org/en/download) - Install NodeJS.
-[Git](https://git-scm.com/) - Git and Github Account.
-[VScode](https://code.visualstudio.com/download) - IDE like vscode to edit code.
+* [NodeJS](http://nodejs.org/en/download) - Install NodeJS.
+ *[Git](https://git-scm.com/) - Git and Github Account.
+* [VScode](https://code.visualstudio.com/download) - IDE like vscode to edit code.
 
 ## Installation for expo-cli and react native
 ```bash
