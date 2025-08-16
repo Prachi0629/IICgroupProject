@@ -34,7 +34,7 @@ export default function App() {
     return <Text>No access to camera</Text>;
   }
   const doa = () => {
-    navigation.navigate('main', {newData : BarData})
+    navigation.replace('main', {newData : BarData})
   }
   return (
     <View style={styles.container}>
